@@ -7,6 +7,7 @@
 
 	window.onload = function() {
 
+		const local = getParameterByName('local') || 'false'
 		const query = getParameterByName('q') || 'cpall'
 		const year = getParameterByName('y') || '2007'
 
@@ -35,7 +36,7 @@
 		function drawChart(financialData) {
 
 			const chart1 = new CanvasJS.Chart('chartContainer1', {
-				animationEnabled: true,
+				animationEnabled: false,
 				theme: 'light2',
 				title:{
 					text: query.toUpperCase()
@@ -72,7 +73,7 @@
 				})
 			});
 			const chart2 = new CanvasJS.Chart('chartContainer2', {
-				animationEnabled: true,
+				animationEnabled: false,
 				theme: 'light2',
 				title:{
 					text: ' '
@@ -109,7 +110,7 @@
 				})
 			});
 			const chart3 = new CanvasJS.Chart('chartContainer3', {
-				animationEnabled: true,
+				animationEnabled: false,
 				theme: 'light2',
 				title:{
 					text: ' '
@@ -146,7 +147,7 @@
 				})
 			});
 			const chart4 = new CanvasJS.Chart('chartContainer4', {
-				animationEnabled: true,
+				animationEnabled: false,
 				theme: 'light2',
 				title:{
 					text: ' '
@@ -183,7 +184,7 @@
 				})
 			});
 			const chart5 = new CanvasJS.Chart('chartContainer5', {
-				animationEnabled: true,
+				animationEnabled: false,
 				theme: 'light2',
 				title:{
 					text: ' '
@@ -220,7 +221,7 @@
 				})
 			});
 			const chart6 = new CanvasJS.Chart('chartContainer6', {
-				animationEnabled: true,
+				animationEnabled: false,
 				theme: 'light2',
 				title:{
 					text: ' '
@@ -257,7 +258,7 @@
 				})
 			});
 			const chart7 = new CanvasJS.Chart('chartContainer7', {
-				animationEnabled: true,
+				animationEnabled: false,
 				theme: 'light2',
 				title:{
 					text: ' '
@@ -294,7 +295,7 @@
 				})
 			});
 			const chart8 = new CanvasJS.Chart('chartContainer8', {
-				animationEnabled: true,
+				animationEnabled: false,
 				theme: 'light2',
 				title:{
 					text: ' '
@@ -344,15 +345,14 @@
 		function init() {
 			if (!query) return;
 
-			axios.get('https://cors-anywhere.herokuapp.com/https://www.finnomena.com/fn3/api/stock/quote?name=' + query)
-			.then((response) => {
-				return axios.get('https://cors-anywhere.herokuapp.com/https://www.finnomena.com/fn3/api/stock/financial?fiscal=' + year + '&securityID=' + response.data.data.ID)
-			}).then((response) => {
-		    // console.log(response.data.data);
-				drawChart(response.data.data)
-		  }).catch((error) => {
-		    // console.log(error);
-		  })
+			var corsServer = local === 'true' ? 'http://localhost:8080' : 'https://cors-anywhere.herokuapp.com'
+
+			axios.get(`${corsServer}/https://www.finnomena.com/fn3/api/stock/quote?name=${query}`)
+        .then((response) => {
+          return axios.get(`${corsServer}/https://www.finnomena.com/fn3/api/stock/financial?fiscal=${year}&securityID=${response.data.data.ID}`)
+        }).then((response) => {
+          drawChart(response.data.data)
+        }).catch(console.error)
 		}
 
 		init()
