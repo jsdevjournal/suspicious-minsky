@@ -14,6 +14,13 @@
 		document.getElementById('input-q').value = query
 		document.getElementById('input-y').value = year
 
+		window.clickLink = function clickLink(href) {
+			Object.assign(document.createElement('a'), {
+				target: '_blank',
+				href: href + query,
+			}).click();
+		}
+
 		function getParameterByName(name, url) {
 			if (!url) url = window.location.href;
 			name = name.replace(/[\[\]]/g, '\\$&');
@@ -364,7 +371,13 @@
     Symbol: <input id="input-q" type="text" name="q">
     Year: <input id="input-y" type="number" name="y">
     <input type="submit" value="Submit">
-  </form>
+	</form>
+	<div>
+		Open in:
+		<button onclick="clickLink('https://www.jitta.com/stock/bkk:')">Jitta</button>
+		<button onclick="clickLink('https://www.set.or.th/set/companyprofile.do?symbol=')">SET.or.th</button>
+		<button onclick="clickLink('http://siamchart.com/stock-chart/')">Siamchart</button>
+	</div>
 </div>
 <div id="chartContainer1" style="height: 400px; width: 100%; margin: 0px auto;"></div>
 <div id="chartContainer2" style="height: 400px; width: 100%; margin: 0px auto;"></div>
