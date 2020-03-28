@@ -16,8 +16,8 @@ function getParameterByName(name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-function transform(financialData, column, divide) {
-  return financialData.filter(data => data['Quarter'] !== 9).slice(2).map(data => {
+function transform(data, column, divide) {
+  return data.filter(data => data['Quarter'] !== 9).slice(2).map(data => {
     return {
       label: 'Q' + data['Quarter'] + ' ' + data['Fiscal'],
       y: parseFloat(data[column]) / divide
@@ -25,10 +25,12 @@ function transform(financialData, column, divide) {
   })
 }
 
-function calculateFscore(financialData) {
+function calculateFscore(data) {
   let score = 0
-  const lastItem = financialData.slice(-1)[0]
-  const beforeLastItem = financialData.slice(-2)[0]
+  const lastItem = data.slice(-1)[0]
+  const beforeLastItem = data.slice(-2)[0]
+
+  if (!lastItem || !beforeLastItem) return 'N/A'
   
   if (Number(lastItem['ROA']) > 0) {
     score += 1
@@ -60,7 +62,7 @@ function calculateFscore(financialData) {
   return score
 }
 
-function drawChart(financialData) {
+function drawChart(data) {
 
   const chart1 = new CanvasJS.Chart('chartContainer1', {
     animationEnabled: false,
@@ -95,7 +97,7 @@ function drawChart(financialData) {
         showInLegend: true,
         name: column,
         yValueFormatString: "##.00",
-        dataPoints: transform(financialData, column, 1000)
+        dataPoints: transform(data, column, 1000)
       }
     })
   });
@@ -132,7 +134,7 @@ function drawChart(financialData) {
         showInLegend: true,
         name: column,
         yValueFormatString: '##.00',
-        dataPoints: transform(financialData, column, 1000)
+        dataPoints: transform(data, column, 1000)
       }
     })
   });
@@ -169,7 +171,7 @@ function drawChart(financialData) {
         showInLegend: true,
         name: column,
         yValueFormatString: '##.00',
-        dataPoints: transform(financialData, column, 1000)
+        dataPoints: transform(data, column, 1000)
       }
     })
   });
@@ -206,7 +208,7 @@ function drawChart(financialData) {
         showInLegend: true,
         name: column,
         yValueFormatString: '##.00',
-        dataPoints: transform(financialData, column, 1)
+        dataPoints: transform(data, column, 1)
       }
     })
   });
@@ -243,7 +245,7 @@ function drawChart(financialData) {
         showInLegend: true,
         name: column,
         yValueFormatString: '##.00%',
-        dataPoints: transform(financialData, column, 100)
+        dataPoints: transform(data, column, 100)
       }
     })
   });
@@ -280,7 +282,7 @@ function drawChart(financialData) {
         showInLegend: true,
         name: column,
         yValueFormatString: '##.00%',
-        dataPoints: transform(financialData, column, 1)
+        dataPoints: transform(data, column, 1)
       }
     })
   });
@@ -317,7 +319,7 @@ function drawChart(financialData) {
         showInLegend: true,
         name: column,
         yValueFormatString: '##.00',
-        dataPoints: transform(financialData, column, 1)
+        dataPoints: transform(data, column, 1)
       }
     })
   });
@@ -354,7 +356,7 @@ function drawChart(financialData) {
         showInLegend: true,
         name: column,
         yValueFormatString: '##.00',
-        dataPoints: transform(financialData, column, 1000)
+        dataPoints: transform(data, column, 1000)
       }
     })
   });
