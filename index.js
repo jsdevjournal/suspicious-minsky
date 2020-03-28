@@ -371,20 +371,17 @@ function drawChart(data) {
   chart8.render();
 }
 
-const local = getParameterByName('local') || 'false'
 const query = getParameterByName('q') || 'cpall'
 const year = getParameterByName('y') || '2007'
 
 document.getElementById('input-q').value = query
 document.getElementById('input-y').value = year
 
-const corsServer = local === 'true' ? 'http://localhost:8080' : 'https://cors-anywhere.herokuapp.com'
-
-axios.get(`${corsServer}/https://www.finnomena.com/fn3/api/stock/quote?name=${query}`)
-  .then((response) => {
-    return axios.get(`${corsServer}/https://www.finnomena.com/fn3/api/stock/financial?fiscal=${year}&securityID=${response.data.data.ID}`)
-  }).then((response) => {
-    const data = response.data.data
+axios({
+  method: 'get',
+  url: `https://asia-east2-suspicious-minsky-49b420.cloudfunctions.net/financial?q=${query}&y=${year}`,
+}).then((response) => {
+    const data = response.data
     if (data) {
       drawChart(data);
       const fscoreA = calculateFscore(data.filter(d => d['Quarter'] === 9));
