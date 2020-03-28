@@ -384,10 +384,12 @@ axios.get(`${corsServer}/https://www.finnomena.com/fn3/api/stock/quote?name=${qu
   .then((response) => {
     return axios.get(`${corsServer}/https://www.finnomena.com/fn3/api/stock/financial?fiscal=${year}&securityID=${response.data.data.ID}`)
   }).then((response) => {
-    drawChart(response.data.data);
-
-    const fscoreA = calculateFscore(response.data.data.filter(data => data['Quarter'] === 9));
-    const fscoreQ = calculateFscore(response.data.data.filter(data => data['Quarter'] !== 9));
-    document.getElementById('fscore-a').textContent = fscoreA
-    document.getElementById('fscore-q').textContent = fscoreQ
+    const data = response.data.data
+    if (data) {
+      drawChart(data);
+      const fscoreA = calculateFscore(data.filter(d => d['Quarter'] === 9));
+      const fscoreQ = calculateFscore(data.filter(d => d['Quarter'] !== 9));
+      document.getElementById('fscore-a').textContent = fscoreA
+      document.getElementById('fscore-q').textContent = fscoreQ
+    }
   }).catch(console.error)
