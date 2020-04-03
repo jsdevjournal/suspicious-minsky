@@ -1,4 +1,15 @@
 
+let annualData = [];
+let quarterData = [];
+
+let selectedDisplayValue;
+
+const spanFscoreA = document.getElementById('fscore-a');
+const spanFscoreQ = document.getElementById('fscore-q');
+const inputQ = document.getElementById('input-q');
+const inputY = document.getElementById('input-y');
+const selectDisplay = document.getElementById('display');
+
 window.clickLink = function clickLink(href) {
   Object.assign(document.createElement('a'), {
     target: '_blank',
@@ -17,9 +28,9 @@ function getParameterByName(name, url) {
 }
 
 function transform(data, column, divide) {
-  return data.filter(data => data['Quarter'] !== 9).slice(2).map(data => {
+  return data.slice(2).map(data => {
     return {
-      label: 'Q' + data['Quarter'] + ' ' + data['Fiscal'],
+      label: `${data['Quarter'] !== 9 ? `Q${data['Quarter']}` : ''} ${data['Fiscal']}`,
       y: parseFloat(data[column]) / divide
     }
   })
@@ -62,7 +73,19 @@ function calculateFscore(data) {
   return score
 }
 
-function drawChart(data) {
+function drawChart(isRerender) {
+
+  let data = selectedDisplayValue === 'q' ? quarterData : annualData;
+
+  if (!isRerender) { // Create first time
+    const chartCount = 7;
+    for (let i = 1; i <= chartCount; i++) {
+      let div = document.createElement('div');
+      div.setAttribute('id', `chartContainer${i}`);
+      div.setAttribute('style', 'height: 400px; width: 100%; margin: 0px auto;');
+      document.body.append(div);
+    }
+  }
 
   const chart1 = new CanvasJS.Chart('chartContainer1', {
     animationEnabled: false,
@@ -323,43 +346,43 @@ function drawChart(data) {
       }
     })
   });
-  const chart8 = new CanvasJS.Chart('chartContainer8', {
-    animationEnabled: false,
-    theme: 'light2',
-    title: {
-      text: ' '
-    },
-    axisY: {
-      title: 'Million THB',
-      crosshair: {
-        enabled: true
-      }
-    },
-    toolTip: {
-      shared: true
-    },
-    legend: {
-      cursor: 'pointer',
-      verticalAlign: 'bottom',
-      itemclick: (e) => {
-        if (typeof (e.dataSeries.visible) === 'undefined' || e.dataSeries.visible) {
-          e.dataSeries.visible = false;
-        } else {
-          e.dataSeries.visible = true;
-        }
-        chart8.render();
-      }
-    },
-    data: ['MKTCap'].map(column => {
-      return {
-        type: 'line',
-        showInLegend: true,
-        name: column,
-        yValueFormatString: '##.00',
-        dataPoints: transform(data, column, 1000)
-      }
-    })
-  });
+  // const chart8 = new CanvasJS.Chart('chartContainer8', {
+  //   animationEnabled: false,
+  //   theme: 'light2',
+  //   title: {
+  //     text: ' '
+  //   },
+  //   axisY: {
+  //     title: 'Million THB',
+  //     crosshair: {
+  //       enabled: true
+  //     }
+  //   },
+  //   toolTip: {
+  //     shared: true
+  //   },
+  //   legend: {
+  //     cursor: 'pointer',
+  //     verticalAlign: 'bottom',
+  //     itemclick: (e) => {
+  //       if (typeof (e.dataSeries.visible) === 'undefined' || e.dataSeries.visible) {
+  //         e.dataSeries.visible = false;
+  //       } else {
+  //         e.dataSeries.visible = true;
+  //       }
+  //       chart8.render();
+  //     }
+  //   },
+  //   data: ['MKTCap'].map(column => {
+  //     return {
+  //       type: 'line',
+  //       showInLegend: true,
+  //       name: column,
+  //       yValueFormatString: '##.00',
+  //       dataPoints: transform(data, column, 1000)
+  //     }
+  //   })
+  // });
   chart1.render();
   chart2.render();
   chart3.render();
@@ -368,14 +391,29 @@ function drawChart(data) {
   chart6.render();
   chart6.render();
   chart7.render();
-  chart8.render();
+  // chart8.render();
 }
 
-const query = getParameterByName('q') || 'cpall'
-const year = getParameterByName('y') || '2007'
+function filterAnnually(item) {
+  return item['Quarter'] === 9;
+}
 
-document.getElementById('input-q').value = query
-document.getElementById('input-y').value = year
+function filterQuarterly(item) {
+  return item['Quarter'] !== 9;
+}
+
+selectedDisplayValue = selectDisplay.value || 'q';
+
+selectDisplay.addEventListener('change', (e) => {
+  selectedDisplayValue = e.srcElement.value;
+  drawChart(true);
+});
+
+const query = getParameterByName('q') || 'cpall';
+const year = getParameterByName('y') || '2007';
+
+inputQ.value = query;
+inputY.value = year;
 
 axios({
   method: 'get',
@@ -383,10 +421,10 @@ axios({
 }).then((response) => {
     const data = response.data
     if (data) {
-      drawChart(data);
-      const fscoreA = calculateFscore(data.filter(d => d['Quarter'] === 9));
-      const fscoreQ = calculateFscore(data.filter(d => d['Quarter'] !== 9));
-      document.getElementById('fscore-a').textContent = fscoreA
-      document.getElementById('fscore-q').textContent = fscoreQ
+      annualData = data.filter(filterAnnually);
+      quarterData = data.filter(filterQuarterly);
+      spanFscoreA.textContent = calculateFscore(annualData);
+      spanFscoreQ.textContent = calculateFscore(quarterData);
+      drawChart();
     }
-  }).catch(console.error)
+  }).catch(console.error);

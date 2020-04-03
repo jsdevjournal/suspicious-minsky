@@ -19,30 +19,14 @@
 			<button onclick="clickLink('https://www.set.or.th/set/companyprofile.do?symbol=')">SET.or.th</button>
 			<button onclick="clickLink('http://siamchart.com/stock-chart/')">Siamchart</button>
 		</div>
-		<table>
-			<thead>
-				<tr>
-					<th>F-Score (8 Points)</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>Annually: <span id="fscore-a">-</span></td>
-				</tr>
-				<tr>
-					<td>Quarterly: <span id="fscore-q">-</span></td>
-				</tr>
-			</tbody>
-		</table>
+		<div>Display: 
+			<select id="display">
+				<option value="q" selected>Quarterly</option>
+				<option value="a">Annually</option>
+			</select>
+		</div>
+		<div>F-Score (8 Points): Quarterly=<span id="fscore-q"></span>, Annually=<span id="fscore-a"></span></div>
 	</div>
-	<div id="chartContainer1" style="height: 400px; width: 100%; margin: 0px auto;"></div>
-	<div id="chartContainer2" style="height: 400px; width: 100%; margin: 0px auto;"></div>
-	<div id="chartContainer3" style="height: 400px; width: 100%; margin: 0px auto;"></div>
-	<div id="chartContainer4" style="height: 400px; width: 100%; margin: 0px auto;"></div>
-	<div id="chartContainer5" style="height: 400px; width: 100%; margin: 0px auto;"></div>
-	<div id="chartContainer6" style="height: 400px; width: 100%; margin: 0px auto;"></div>
-	<div id="chartContainer7" style="height: 400px; width: 100%; margin: 0px auto;"></div>
-	<div id="chartContainer8" style="height: 400px; width: 100%; margin: 0px auto;"></div>
 	<script src="index.js"></script>
 </body>
 
