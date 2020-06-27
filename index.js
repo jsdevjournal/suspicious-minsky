@@ -9,13 +9,9 @@ const spanFscoreQ = document.getElementById('fscore-q');
 const inputQ = document.getElementById('input-q');
 const inputY = document.getElementById('input-y');
 const selectDisplay = document.getElementById('display');
-
-window.clickLink = function clickLink(href) {
-  Object.assign(document.createElement('a'), {
-    target: '_blank',
-    href: href + query,
-  }).click();
-}
+const jitta = document.getElementById('jitta');
+const set = document.getElementById('set');
+const siamchart = document.getElementById('siamchart');
 
 function getParameterByName(name, url) {
   if (!url) url = window.location.href;
@@ -411,6 +407,10 @@ selectDisplay.addEventListener('change', (e) => {
 
 const query = getParameterByName('q') || 'cpall';
 const year = getParameterByName('y') || '2007';
+
+jitta.href = 'https://www.jitta.com/stock/bkk:' + query;
+set.href = 'https://www.set.or.th/set/companyprofile.do?symbol=' + query;
+siamchart.href = 'http://siamchart.com/stock-chart/' + query;
 
 inputQ.value = query;
 inputY.value = year;
